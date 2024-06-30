@@ -3,6 +3,8 @@ import { getRandomInteger, getRandomColorRgb } from "./utils";
 
 const NaiveJavascript = () => {
   // Constants
+  const INITIAL_PARTICLES = 2000;
+
   const UNIVERSE_WIDTH = 600;
   const UNIVERSE_HEIGHT = 600;
 
@@ -17,6 +19,7 @@ const NaiveJavascript = () => {
   const [context, setContext] = useState(null);
 
   const [kineticEnergy, setKineticEnergy] = useState(0);
+  const [fps, setFps] = useState(0);
 
   const [circles, setCircles] = useState([
     { x: 10, y: 10, dx: 1, dy: 4, radius: 10, color: "white" },
@@ -30,7 +33,7 @@ const NaiveJavascript = () => {
       return totalEnergy + kineticEnergy;
     }, 0);
 
-    return Math.round(energy);
+    return energy.toFixed(2);
   }
 
   // Methods
@@ -46,8 +49,8 @@ const NaiveJavascript = () => {
   const handleClick = (event) => {
     const { offsetX, offsetY } = event.nativeEvent;
 
-    const dx = getRandomInteger(-3, 3);
-    const dy = getRandomInteger(-3, 3);
+    const dx = getRandomInteger(-5, 5);
+    const dy = getRandomInteger(-5, 5);
 
     const newCircles = [...circles];
 
@@ -56,7 +59,7 @@ const NaiveJavascript = () => {
       y: offsetY,
       dx,
       dy,
-      radius: getRandomInteger(5, 10),
+      radius: getRandomInteger(15, 30),
       color: getRandomColorRgb(),
     });
 
@@ -67,11 +70,11 @@ const NaiveJavascript = () => {
     const newCircles = [];
 
     for (let i = 0; i < count; i++) {
-      const x = getRandomInteger(UNIVERSE_X_START + 20, UNIVERSE_X_END - 20);
-      const y = getRandomInteger(UNIVERSE_Y_START + 20, UNIVERSE_Y_END - 20);
-      const dx = getRandomInteger(-3, 3);
-      const dy = getRandomInteger(-3, 3);
-      const radius = getRandomInteger(15, 25);
+      const x = getRandomInteger(UNIVERSE_X_START + 298, UNIVERSE_X_END - 298);
+      const y = getRandomInteger(UNIVERSE_Y_START + 298, UNIVERSE_Y_END - 298);
+      const dx = getRandomInteger(-1, 1);
+      const dy = getRandomInteger(-1, 1);
+      const radius = getRandomInteger(1, 2);
       const color = getRandomColorRgb();
 
       newCircles.push({ x, y, dx, dy, radius, color });
@@ -85,6 +88,7 @@ const NaiveJavascript = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const animate = () => {
     // Get the canvas and context
     const canvas = canvasRef.current;
@@ -195,20 +199,36 @@ const NaiveJavascript = () => {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       setContext(ctx);
-      drawRandomCircles(5);
+      drawRandomCircles(INITIAL_PARTICLES);
     }
   }, []);
 
   useEffect(() => {
     let animationFrameId;
+    let lastTimestamp = performance.now();
+    let frameCount = 0;
+    let fps = 0;
+
+    const render = (timestamp) => {
+      animate();
+
+      // Calculate FPS
+      frameCount++;
+      const elapsed = timestamp - lastTimestamp;
+      if (elapsed >= 1000) {
+        fps = (frameCount / elapsed) * 1000; // Calculate FPS
+        frameCount = 0;
+        lastTimestamp = timestamp;
+        setFps(Math.floor(fps)); // Display FPS
+      }
+
+      animationFrameId = window.requestAnimationFrame(render);
+    };
+
     if (context) {
-      //Our draw came here
-      const render = () => {
-        animate();
-        animationFrameId = window.requestAnimationFrame(render);
-      };
-      render();
+      animationFrameId = window.requestAnimationFrame(render);
     }
+
     return () => {
       window.cancelAnimationFrame(animationFrameId);
     };
@@ -216,10 +236,10 @@ const NaiveJavascript = () => {
 
   return (
     <div>
-      <h2>Naive Javascript Implementation</h2>
+      <h2>Javascript | Naive Algorithm | Simple Elastic Collision</h2>
       <p>
-        Total Particles: {circles.length} | Kinetic Energy: {kineticEnergy} kg
-        m/s^2
+        {fps}fps | Total Particles: {circles.length} | Kinetic Energy:{" "}
+        {kineticEnergy} kg m/s^2
       </p>
       <canvas
         ref={canvasRef}
@@ -229,6 +249,7 @@ const NaiveJavascript = () => {
         style={{ border: "2px solid #444" }}
         onClick={handleClick}
       ></canvas>
+      <p style={{color: "#999"}}>Click anywhere in the collision area to launch a large particle!</p>
     </div>
   );
 };
