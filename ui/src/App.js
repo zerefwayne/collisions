@@ -1,11 +1,11 @@
 import "./App.css";
-import NaiveJavascript from './NaiveJavascript';
+import NaiveJavascriptSimpleElastic from "./NaiveJavascriptSimpleElastic";
 
 function App() {
   return (
     <div className="App">
       <h1>Collisions</h1>
-      <NaiveJavascript />
+      <NaiveJavascriptSimpleElastic />
     </div>
   );
 }

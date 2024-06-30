@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "./utils";
 
-const NaiveJavascript = () => {
+const NaiveJavascriptSimpleElastic = () => {
   // Constants
   const INITIAL_PARTICLES = 2000;
 
@@ -49,8 +49,8 @@ const NaiveJavascript = () => {
   const handleClick = (event) => {
     const { offsetX, offsetY } = event.nativeEvent;
 
-    const dx = getRandomInteger(-5, 5);
-    const dy = getRandomInteger(-5, 5);
+    const dx = getRandomInteger(-20, 20);
+    const dy = getRandomInteger(-20, 20);
 
     const newCircles = [...circles];
 
@@ -59,7 +59,7 @@ const NaiveJavascript = () => {
       y: offsetY,
       dx,
       dy,
-      radius: getRandomInteger(15, 30),
+      radius: getRandomInteger(5, 10),
       color: getRandomColorRgb(),
     });
 
@@ -74,7 +74,7 @@ const NaiveJavascript = () => {
       const y = getRandomInteger(UNIVERSE_Y_START + 298, UNIVERSE_Y_END - 298);
       const dx = getRandomInteger(-1, 1);
       const dy = getRandomInteger(-1, 1);
-      const radius = getRandomInteger(1, 2);
+      const radius = getRandomInteger(1, 3);
       const color = getRandomColorRgb();
 
       newCircles.push({ x, y, dx, dy, radius, color });
@@ -87,6 +87,34 @@ const NaiveJavascript = () => {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
+
+  function calculateSpeed(circle) {
+    return Math.sqrt(circle.dx * circle.dx + circle.dy * circle.dy);
+  }
+
+  function interpolateColor(value, color1, color2) {
+    const r = color1[0] + value * (color2[0] - color1[0]);
+    const g = color1[1] + value * (color2[1] - color1[1]);
+    const b = color1[2] + value * (color2[2] - color1[2]);
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+  }
+
+  function getColor(speed) {
+    const normalizedSpeed = Math.min(speed / 5, 1.0);
+    const lowColor = [0, 0, 139]; // Dark Blue
+    const highColor = [255, 0, 0]; // Red
+    return interpolateColor(normalizedSpeed, lowColor, highColor);
+  }
+
+  function updateCircleColors(circles) {
+    const speeds = circles.map(calculateSpeed);
+    const maxSpeed = Math.max(...speeds);
+
+    circles.forEach((circle, index) => {
+      const speed = speeds[index];
+      circle.color = getColor(speed, maxSpeed);
+    });
+  }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const animate = () => {
@@ -189,6 +217,8 @@ const NaiveJavascript = () => {
 
     setKineticEnergy(calculateTotalKineticEnergy(updatedCircles));
 
+    updateCircleColors(updatedCircles);
+
     for (const circle of updatedCircles) {
       drawCircle(ctx, circle.x, circle.y, circle.radius, circle.color);
     }
@@ -249,9 +279,11 @@ const NaiveJavascript = () => {
         style={{ border: "2px solid #444" }}
         onClick={handleClick}
       ></canvas>
-      <p style={{color: "#999"}}>Click anywhere in the collision area to launch a large particle!</p>
+      <p style={{ color: "#999" }}>
+        Click anywhere in the collision area to launch a large particle!
+      </p>
     </div>
   );
 };
 
-export default NaiveJavascript;
+export default NaiveJavascriptSimpleElastic;
