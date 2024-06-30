@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "./utils";
 
-const NaiveJavascriptSimpleElastic = () => {
+const NaiveJavascriptSimpleElasticCollision = () => {
   // Constants
   const INITIAL_PARTICLES = 2000;
 
@@ -128,7 +128,7 @@ const NaiveJavascriptSimpleElastic = () => {
       circle.x += circle.dx;
       circle.y += circle.dy;
 
-      // Check for collisions with other circles
+      // // Check for collisions with other circles
       for (let j = 0; j < circles.length; j++) {
         if (index !== j) {
           let otherCircle = circles[j];
@@ -286,4 +286,4 @@ const NaiveJavascriptSimpleElastic = () => {
   );
 };
 
-export default NaiveJavascriptSimpleElastic;
+export default NaiveJavascriptSimpleElasticCollision;
