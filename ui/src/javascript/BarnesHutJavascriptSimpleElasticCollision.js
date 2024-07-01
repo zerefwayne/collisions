@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "../utils";
 import Paper from "@mui/material/Paper";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Slider } from "@mui/material";
 
 import "./styles.css";
 
@@ -117,6 +117,7 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   const [fps, setFps] = useState(0);
   const [averageKineticEnergy, setAverageKineticEnergy] = useState(0);
   const [averageSpeed, setAverageSpeed] = useState(0);
+  const [coefficientOfRestitution, setCoefficientOfRestitution] = useState(1);
 
   const [UNIVERSE_WIDTH, setUniverseWidth] = useState(0);
   const [UNIVERSE_HEIGHT, setUniverseHeight] = useState(0);
@@ -129,6 +130,10 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
 
   const handleIncrement = () => {
     drawRandomCircles(step);
+  };
+
+  const handleRestitutionChange = (event, newValue) => {
+    setCoefficientOfRestitution(newValue);
   };
 
   const handleDecrement = () => {
@@ -324,6 +329,10 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
               y: v2.y,
             };
 
+            // Apply coefficient of restitution
+            v1Final.x *= coefficientOfRestitution;
+            v2Final.x *= coefficientOfRestitution;
+
             // Rotate back
             circle.dx = cos * v1Final.x - sin * v1Final.y;
             circle.dy = cos * v1Final.y + sin * v1Final.x;
@@ -345,13 +354,13 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
         circle.x + circle.radius > canvas.width ||
         circle.x - circle.radius < 0
       ) {
-        circle.dx *= -1; // Reverse direction on reaching edge
+        circle.dx *= -1 * coefficientOfRestitution;// Reverse direction on reaching edge
       }
       if (
         circle.y + circle.radius > canvas.height ||
         circle.y - circle.radius < 0
       ) {
-        circle.dy *= -1;
+        circle.dy *= -1 * coefficientOfRestitution;
       }
 
       if (circle.x + circle.radius > canvas.width) {
@@ -508,6 +517,41 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
             <Button variant="contained" size="small" onClick={handleIncrement}>
               +
             </Button>
+          </body>
+        </Paper>
+        <Paper
+          elevation={0}
+          square
+          sx={{
+            backgroundColor: "#0a0a0a",
+            color: "white",
+            padding: "1rem",
+            borderBottom: "1px solid #222",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <header style={{ marginBottom: "1rem" }}>
+            Coeffficient of Restitution: {coefficientOfRestitution}
+          </header>
+          <body
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Slider
+              defaultValue={1.0}
+              step={0.01}
+              min={0}
+              max={1}
+              valueLabelDisplay="off"
+              onChange={handleRestitutionChange}
+            />
           </body>
         </Paper>
       </div>
