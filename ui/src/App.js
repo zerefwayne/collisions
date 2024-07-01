@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
 import "./App.css";
-import NaiveJavascriptSimpleElasticCollision from "./NaiveJavascriptSimpleElasticCollision";
-import NaiveJavascriptNoCollision from "./NaiveJavascriptNoCollision";
+import NaiveJavascriptSimpleElasticCollision from "./javascript/NaiveJavascriptSimpleElasticCollision";
+import NaiveJavascriptNoCollision from "./javascript/NaiveJavascriptNoCollision";
+import BarnesHutJavascriptSimpleElasticCollision from "./javascript/BarnesHutJavascriptSimpleElasticCollision";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("A");
+  const [selectedComponent, setSelectedComponent] = useState("C");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);
@@ -15,9 +16,11 @@ function App() {
   const renderSelectedComponent = () => {
     switch (selectedComponent) {
       case "A":
-        return <NaiveJavascriptSimpleElasticCollision />;
-      case "B":
         return <NaiveJavascriptNoCollision />;
+      case "B":
+        return <NaiveJavascriptSimpleElasticCollision />;
+      case "C":
+        return <BarnesHutJavascriptSimpleElasticCollision />;
       default:
         return null;
     }
@@ -27,8 +30,9 @@ function App() {
     <div className="App">
       <h1>Collisions</h1>
       <select value={selectedComponent} onChange={handleChange}>
-        <option value="A">JS | Naive | Simple Elastic</option>
-        <option value="B">JS | Naive | No Collision</option>
+        <option value="A">JS | Naive | No Collision</option>
+        <option value="B">JS | Naive | Simple Elastic</option>
+        <option value="C">JS | Barnes Hut | Simple Elastic</option>
       </select>
       {renderSelectedComponent()}
     </div>

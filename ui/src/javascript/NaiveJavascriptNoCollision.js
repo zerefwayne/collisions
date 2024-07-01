@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { getRandomInteger, getRandomColorRgb } from "./utils";
+import { getRandomInteger, getRandomColorRgb } from "../utils";
 
 const NaiveJavascriptNoCollision = () => {
   // Constants

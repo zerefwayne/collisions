@@ -1,12 +1,111 @@
 import { useEffect, useRef, useState } from "react";
-import { getRandomInteger, getRandomColorRgb } from "./utils";
+import { getRandomInteger, getRandomColorRgb } from "../utils";
 
-const NaiveJavascriptSimpleElasticCollision = () => {
+class QuadTree {
+  constructor(boundary, capacity) {
+    this.boundary = boundary; // Boundary is a rectangle { x, y, w, h }
+    this.capacity = capacity; // Max number of objects in a quadrant before subdivision
+    this.circles = [];
+    this.divided = false;
+  }
+
+  subdivide() {
+    let x = this.boundary.x;
+    let y = this.boundary.y;
+    let w = this.boundary.w / 2;
+    let h = this.boundary.h / 2;
+
+    let ne = new Rectangle(x + w, y - h, w, h);
+    let nw = new Rectangle(x - w, y - h, w, h);
+    let se = new Rectangle(x + w, y + h, w, h);
+    let sw = new Rectangle(x - w, y + h, w, h);
+
+    this.northeast = new QuadTree(ne, this.capacity);
+    this.northwest = new QuadTree(nw, this.capacity);
+    this.southeast = new QuadTree(se, this.capacity);
+    this.southwest = new QuadTree(sw, this.capacity);
+
+    this.divided = true;
+  }
+
+  insert(circle) {
+    if (!this.boundary.contains(circle)) {
+      return false;
+    }
+
+    if (this.circles.length < this.capacity) {
+      this.circles.push(circle);
+      return true;
+    } else {
+      if (!this.divided) {
+        this.subdivide();
+      }
+
+      if (this.northeast.insert(circle)) return true;
+      if (this.northwest.insert(circle)) return true;
+      if (this.southeast.insert(circle)) return true;
+      if (this.southwest.insert(circle)) return true;
+    }
+  }
+
+  query(range, found) {
+    if (!found) {
+      found = [];
+    }
+
+    if (!this.boundary.intersects(range)) {
+      return found;
+    } else {
+      for (let c of this.circles) {
+        if (range.contains(c)) {
+          found.push(c);
+        }
+      }
+      if (this.divided) {
+        this.northwest.query(range, found);
+        this.northeast.query(range, found);
+        this.southwest.query(range, found);
+        this.southeast.query(range, found);
+      }
+    }
+
+    return found;
+  }
+}
+
+class Rectangle {
+  constructor(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+  }
+
+  contains(circle) {
+    return (
+      circle.x - circle.radius > this.x - this.w &&
+      circle.x + circle.radius < this.x + this.w &&
+      circle.y - circle.radius > this.y - this.h &&
+      circle.y + circle.radius < this.y + this.h
+    );
+  }
+
+  intersects(range) {
+    return !(
+      range.x - range.w > this.x + this.w ||
+      range.x + range.w < this.x - this.w ||
+      range.y - range.h > this.y + this.h ||
+      range.y + range.h < this.y - this.h
+    );
+  }
+}
+
+const BarnesHutJavascriptSimpleElasticCollision = () => {
   // Constants
-  const INITIAL_PARTICLES = 2000;
+  const INITIAL_PARTICLES = 10000;
 
-  const UNIVERSE_WIDTH = 600;
-  const UNIVERSE_HEIGHT = 600;
+  const UNIVERSE_WIDTH = 1200;
+  const UNIVERSE_HEIGHT = 500;
 
   const UNIVERSE_X_START = 0;
   const UNIVERSE_X_END = UNIVERSE_WIDTH - 1;
@@ -20,6 +119,7 @@ const NaiveJavascriptSimpleElasticCollision = () => {
 
   const [kineticEnergy, setKineticEnergy] = useState(0);
   const [fps, setFps] = useState(0);
+  const [averageKineticEnergy, setAverageKineticEnergy] = useState(0);
 
   const [circles, setCircles] = useState([
     { x: 10, y: 10, dx: 1, dy: 4, radius: 10, color: "white" },
@@ -124,14 +224,33 @@ const NaiveJavascriptSimpleElasticCollision = () => {
 
     clearCanvas(canvas);
 
+    const boundary = new Rectangle(
+      canvas.width / 2,
+      canvas.height / 2,
+      canvas.width / 2,
+      canvas.height / 2
+    );
+    const qtree = new QuadTree(boundary, 4);
+
+    circles.forEach((circle) => {
+      qtree.insert(circle);
+    });
+
     const updatedCircles = circles.map((circle, index) => {
       circle.x += circle.dx;
       circle.y += circle.dy;
 
-      // // Check for collisions with other circles
-      for (let j = 0; j < circles.length; j++) {
-        if (index !== j) {
-          let otherCircle = circles[j];
+      // Query for potential collisions within a radius
+      const range = new Rectangle(
+        circle.x,
+        circle.y,
+        circle.radius * 2,
+        circle.radius * 2
+      );
+      const potentialCollisions = qtree.query(range);
+
+      for (let otherCircle of potentialCollisions) {
+        if (circle !== otherCircle) {
           let dx = circle.x - otherCircle.x;
           let dy = circle.y - otherCircle.y;
           let distance = Math.sqrt(dx * dx + dy * dy);
@@ -215,7 +334,11 @@ const NaiveJavascriptSimpleElasticCollision = () => {
       return circle;
     });
 
-    setKineticEnergy(calculateTotalKineticEnergy(updatedCircles));
+    const kineticEnergy = calculateTotalKineticEnergy(updatedCircles);
+    const averageKineticEnergy = (kineticEnergy / circles.length).toFixed(2);
+
+    setKineticEnergy(kineticEnergy);
+    setAverageKineticEnergy(averageKineticEnergy);
 
     updateCircleColors(updatedCircles);
 
@@ -266,10 +389,13 @@ const NaiveJavascriptSimpleElasticCollision = () => {
 
   return (
     <div>
-      <h2>Javascript | Naive Algorithm | Simple Elastic Collision</h2>
+      <h2>Javascript | Barnes Hut Algorithm | Simple Elastic Collision</h2>
       <p>
-        {fps}fps | Total Particles: {circles.length} | Kinetic Energy:{" "}
-        {kineticEnergy} kg m/s^2
+        {fps}fps | Total Particles: {circles.length}
+      </p>
+      <p>
+        Average Kinetic Energy: {averageKineticEnergy} kg m/s^2 | Kinetic
+        Energy: {kineticEnergy} kg m/s^2{" "}
       </p>
       <canvas
         ref={canvasRef}
@@ -286,4 +412,4 @@ const NaiveJavascriptSimpleElasticCollision = () => {
   );
 };
 
-export default NaiveJavascriptSimpleElasticCollision;
+export default BarnesHutJavascriptSimpleElasticCollision;
