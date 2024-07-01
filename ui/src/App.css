@@ -6,6 +6,23 @@
   color: white;
 
   box-sizing: border-box;
+}
 
+.App .header {
+  background-color: #040404;
   padding: 1rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.App .header .logo {
+  color: white;
+  font-size: 24px;
+}
+
+.App .header .dropdown {
+  color: white!important;
 }
