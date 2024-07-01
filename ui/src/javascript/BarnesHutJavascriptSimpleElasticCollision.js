@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "../utils";
 import Paper from "@mui/material/Paper";
-import { Button, TextField, Slider } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Slider,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+} from "@mui/material";
 
 import "./styles.css";
 
@@ -118,6 +125,7 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   const [averageKineticEnergy, setAverageKineticEnergy] = useState(0);
   const [averageSpeed, setAverageSpeed] = useState(0);
   const [coefficientOfRestitution, setCoefficientOfRestitution] = useState(1);
+  const [IsWallElastic, setIsWallElastic] = useState(true);
 
   const [UNIVERSE_WIDTH, setUniverseWidth] = useState(0);
   const [UNIVERSE_HEIGHT, setUniverseHeight] = useState(0);
@@ -134,6 +142,10 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
 
   const handleRestitutionChange = (event, newValue) => {
     setCoefficientOfRestitution(newValue);
+  };
+
+  const handleIsWallElastic = (event, newValue) => {
+    setIsWallElastic(newValue);
   };
 
   const handleDecrement = () => {
@@ -354,13 +366,21 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
         circle.x + circle.radius > canvas.width ||
         circle.x - circle.radius < 0
       ) {
-        circle.dx *= -1 * coefficientOfRestitution;// Reverse direction on reaching edge
+        circle.dx *= -1;
+
+        if (!IsWallElastic) {
+          circle.dx *= coefficientOfRestitution;
+        }
       }
       if (
         circle.y + circle.radius > canvas.height ||
         circle.y - circle.radius < 0
       ) {
-        circle.dy *= -1 * coefficientOfRestitution;
+        circle.dy *= -1;
+
+        if (!IsWallElastic) {
+          circle.dy *= coefficientOfRestitution;
+        }
       }
 
       if (circle.x + circle.radius > canvas.width) {
@@ -552,6 +572,41 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
               valueLabelDisplay="off"
               onChange={handleRestitutionChange}
             />
+          </body>
+        </Paper>
+        <Paper
+          elevation={0}
+          square
+          sx={{
+            backgroundColor: "#0a0a0a",
+            color: "white",
+            padding: "1rem",
+            borderBottom: "1px solid #222",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <body
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "flex-start",
+              width: "100%",
+            }}
+          >
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={IsWallElastic}
+                    onChange={handleIsWallElastic}
+                  />
+                }
+                label="Collisions with wall are elastic"
+              />
+            </FormGroup>
           </body>
         </Paper>
       </div>
