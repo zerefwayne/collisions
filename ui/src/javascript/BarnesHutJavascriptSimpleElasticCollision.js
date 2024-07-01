@@ -106,28 +106,26 @@ class Rectangle {
 
 const BarnesHutJavascriptSimpleElasticCollision = () => {
   // Constants
-  const INITIAL_PARTICLES = 1000;
-
-  const UNIVERSE_WIDTH = 700;
-  const UNIVERSE_HEIGHT = 700;
-
-  const UNIVERSE_X_START = 0;
-  const UNIVERSE_X_END = UNIVERSE_WIDTH - 1;
-
-  const UNIVERSE_Y_START = 0;
-  const UNIVERSE_Y_END = UNIVERSE_HEIGHT - 1;
+  const INITIAL_PARTICLES = 5000;
 
   // State
   const canvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
   const [context, setContext] = useState(null);
 
   const [kineticEnergy, setKineticEnergy] = useState(0);
   const [fps, setFps] = useState(0);
   const [averageKineticEnergy, setAverageKineticEnergy] = useState(0);
+  const [averageSpeed, setAverageSpeed] = useState(0);
+
+  const [UNIVERSE_WIDTH, setUniverseWidth] = useState(0);
+  const [UNIVERSE_HEIGHT, setUniverseHeight] = useState(0);
+
+  const [isInitiated, setIsInitiated] = useState(false);
 
   const [circles, setCircles] = useState([]);
 
-  const [step, setStep] = useState(1000);
+  const [step, setStep] = useState(100);
 
   const handleIncrement = () => {
     drawRandomCircles(step);
@@ -191,8 +189,11 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
     const newCircles = [...circles];
 
     for (let i = 0; i < count; i++) {
-      const x = getRandomInteger(UNIVERSE_X_START + 100, UNIVERSE_X_END - 100);
-      const y = getRandomInteger(UNIVERSE_Y_START + 100, UNIVERSE_Y_END - 100);
+      const x = getRandomInteger(UNIVERSE_WIDTH / 3, (2 * UNIVERSE_WIDTH) / 3);
+      const y = getRandomInteger(
+        UNIVERSE_HEIGHT / 3,
+        (2 * UNIVERSE_HEIGHT) / 3
+      );
       const dx = getRandomInteger(-1, 1);
       const dy = getRandomInteger(-1, 1);
       const radius = getRandomInteger(1, 3);
@@ -237,11 +238,28 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
     });
   }
 
+  const calculateAverageVelocity = (circles) => {
+    let totalVelocity = 0;
+
+    circles.forEach((circle) => {
+      const velocity = Math.sqrt(circle.dx * circle.dx + circle.dy * circle.dy);
+      totalVelocity += velocity;
+    });
+
+    const averageVelocity = totalVelocity / circles.length;
+    return averageVelocity.toFixed(2);
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const animate = () => {
     // Get the canvas and context
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
+    if (!isInitiated) {
+      drawRandomCircles(INITIAL_PARTICLES);
+      setIsInitiated(true);
+    }
 
     clearCanvas(canvas);
 
@@ -357,24 +375,17 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
 
     const kineticEnergy = calculateTotalKineticEnergy(updatedCircles);
     const averageKineticEnergy = (kineticEnergy / circles.length).toFixed(2);
+    const averageSpeed = calculateAverageVelocity(updatedCircles);
 
     setKineticEnergy(kineticEnergy);
     setAverageKineticEnergy(averageKineticEnergy);
     updateCircleColors(updatedCircles);
+    setAverageSpeed(averageSpeed);
 
     for (const circle of updatedCircles) {
       drawCircle(ctx, circle.x, circle.y, circle.radius, circle.color);
     }
   };
-
-  useEffect(() => {
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      setContext(ctx);
-      drawRandomCircles(INITIAL_PARTICLES);
-    }
-  }, []);
 
   useEffect(() => {
     let animationFrameId;
@@ -407,21 +418,44 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
     };
   }, [animate, context]);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const container = canvasContainerRef.current;
+
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      setContext(ctx);
+    }
+
+    const resizeCanvas = () => {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+      setUniverseHeight(container.clientHeight);
+      setUniverseWidth(container.clientWidth);
+    };
+
+    // Initial canvas size adjustment
+    resizeCanvas();
+
+    // Adjust canvas size when the window is resized
+    window.addEventListener("resize", resizeCanvas);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", resizeCanvas);
+    };
+  }, []);
+
   return (
     <div className="scene-container">
       <div className="canvas-container">
-        <div className="canvas-render">
-          <canvas
-            ref={canvasRef}
-            id="my-canvas"
-            height={UNIVERSE_HEIGHT}
-            width={UNIVERSE_WIDTH}
-            style={{ border: "2px solid #444" }}
-            onClick={handleClick}
-          ></canvas>
+        <div ref={canvasContainerRef} className="canvas-render">
+          <canvas ref={canvasRef} id="my-canvas" onClick={handleClick}></canvas>
         </div>
         <footer>
           <p>Average Kinetic Energy: {averageKineticEnergy} kg m/s^2</p>
+          <p>Average Speed: {averageSpeed} m/s</p>
           <p>Kinetic Energy: {kineticEnergy} kg m/s^2 </p>
           <p>{fps}fps</p>
         </footer>
@@ -452,7 +486,7 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
             }}
           >
             <Button
-              variant="outlined"
+              variant="contained"
               size="small"
               sx={{}}
               onClick={handleDecrement}
@@ -471,7 +505,7 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
                 "& input": { color: "white" },
               }}
             />
-            <Button variant="outlined" size="small" onClick={handleIncrement}>
+            <Button variant="contained" size="small" onClick={handleIncrement}>
               +
             </Button>
           </body>
