@@ -28,9 +28,13 @@
 }
 
 .controls-container {
-  background-color: #222;
+  background-color: #141414;
   width: 25%;
   height: 100%;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .scene-container {

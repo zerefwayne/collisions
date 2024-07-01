@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "../utils";
+import Paper from "@mui/material/Paper";
+import { Button, TextField } from "@mui/material";
 
 import "./styles.css";
 
@@ -104,7 +106,7 @@ class Rectangle {
 
 const BarnesHutJavascriptSimpleElasticCollision = () => {
   // Constants
-  const INITIAL_PARTICLES = 10000;
+  const INITIAL_PARTICLES = 1000;
 
   const UNIVERSE_WIDTH = 700;
   const UNIVERSE_HEIGHT = 700;
@@ -123,9 +125,26 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   const [fps, setFps] = useState(0);
   const [averageKineticEnergy, setAverageKineticEnergy] = useState(0);
 
-  const [circles, setCircles] = useState([
-    { x: 10, y: 10, dx: 1, dy: 4, radius: 10, color: "white" },
-  ]);
+  const [circles, setCircles] = useState([]);
+
+  const [step, setStep] = useState(1000);
+
+  const handleIncrement = () => {
+    drawRandomCircles(step);
+  };
+
+  const handleDecrement = () => {
+    const decreaseBy = Math.min(circles.length, step);
+    const newCircles = circles.slice(decreaseBy);
+    setCircles(newCircles);
+  };
+
+  const handleStepChange = (event) => {
+    const value = parseInt(event.target.value, 10);
+    if (!isNaN(value) && value >= 0) {
+      setStep(value);
+    }
+  };
 
   function calculateTotalKineticEnergy(circles) {
     const energy = circles.reduce((totalEnergy, circle) => {
@@ -169,11 +188,11 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   };
 
   const drawRandomCircles = (count) => {
-    const newCircles = [];
+    const newCircles = [...circles];
 
     for (let i = 0; i < count; i++) {
-      const x = getRandomInteger(UNIVERSE_X_START + 298, UNIVERSE_X_END - 298);
-      const y = getRandomInteger(UNIVERSE_Y_START + 298, UNIVERSE_Y_END - 298);
+      const x = getRandomInteger(UNIVERSE_X_START + 100, UNIVERSE_X_END - 100);
+      const y = getRandomInteger(UNIVERSE_Y_START + 100, UNIVERSE_Y_END - 100);
       const dx = getRandomInteger(-1, 1);
       const dy = getRandomInteger(-1, 1);
       const radius = getRandomInteger(1, 3);
@@ -341,7 +360,6 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
 
     setKineticEnergy(kineticEnergy);
     setAverageKineticEnergy(averageKineticEnergy);
-
     updateCircleColors(updatedCircles);
 
     for (const circle of updatedCircles) {
@@ -403,14 +421,61 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
           ></canvas>
         </div>
         <footer>
-          <p>Total Particles: {circles.length}</p>
           <p>Average Kinetic Energy: {averageKineticEnergy} kg m/s^2</p>
           <p>Kinetic Energy: {kineticEnergy} kg m/s^2 </p>
           <p>{fps}fps</p>
         </footer>
       </div>
       <div className="controls-container">
-        
+        <Paper
+          elevation={0}
+          square
+          sx={{
+            backgroundColor: "#0a0a0a",
+            color: "white",
+            padding: "1rem",
+            borderBottom: "1px solid #222",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <header style={{ marginBottom: "1rem" }}>
+            Number of particles: {circles.length}
+          </header>
+          <body
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{}}
+              onClick={handleDecrement}
+            >
+              -
+            </Button>
+            <TextField
+              type="number"
+              size="small"
+              value={step}
+              onChange={handleStepChange}
+              inputProps={{ min: 0 }}
+              style={{ margin: "0 10px" }}
+              sx={{
+                backgroundColor: "#111",
+                "& input": { color: "white" },
+              }}
+            />
+            <Button variant="outlined" size="small" onClick={handleIncrement}>
+              +
+            </Button>
+          </body>
+        </Paper>
       </div>
     </div>
   );
