@@ -3,7 +3,7 @@ import { getRandomInteger, getRandomColorRgb } from "./utils";
 
 const NaiveJavascriptSimpleElasticCollision = () => {
   // Constants
-  const INITIAL_PARTICLES = 2000;
+  const INITIAL_PARTICLES = 4000;
 
   const UNIVERSE_WIDTH = 600;
   const UNIVERSE_HEIGHT = 600;

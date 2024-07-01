@@ -1,11 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "./utils";
 
-import init, { add_numbers } from "collisions-src";
+import init, { Circles } from "collisions-src";
 
-const RustNoCollision = () => {
+const NaiveRustSimpleElasticCollision = () => {
   // Constants
-  const INITIAL_PARTICLES = 10000;
+  const INITIAL_PARTICLES = 4000;
 
   const UNIVERSE_WIDTH = 600;
   const UNIVERSE_HEIGHT = 600;
@@ -23,6 +24,9 @@ const RustNoCollision = () => {
 
   const [kineticEnergy, setKineticEnergy] = useState(0);
   const [fps, setFps] = useState(0);
+
+  const [frameCount, setFrameCount] = useState(0);
+  const [lastTimestamp, setLastTimestamp] = useState(performance.now());
 
   const [circles, setCircles] = useState([
     { x: 10, y: 10, dx: 1, dy: 4, radius: 10, color: "white" },
@@ -73,8 +77,8 @@ const RustNoCollision = () => {
     const newCircles = [];
 
     for (let i = 0; i < count; i++) {
-      const x = getRandomInteger(UNIVERSE_X_START + 20, UNIVERSE_X_END - 20);
-      const y = getRandomInteger(UNIVERSE_Y_START + 20, UNIVERSE_Y_END - 20);
+      const x = getRandomInteger(UNIVERSE_X_START + 298, UNIVERSE_X_END - 298);
+      const y = getRandomInteger(UNIVERSE_Y_START + 298, UNIVERSE_Y_END - 298);
       const dx = getRandomInteger(-1, 1);
       const dy = getRandomInteger(-1, 1);
       const radius = getRandomInteger(1, 3);
@@ -127,49 +131,20 @@ const RustNoCollision = () => {
 
     clearCanvas(canvas);
 
-    const updatedCircles = circles.map((circle, index) => {
-      circle.x += circle.dx;
-      circle.y += circle.dy;
+    if (isWasmLoaded) {
+      const circlesWasm = new Circles(circles);
 
-      // Check for bouncing off edges
-      if (
-        circle.x + circle.radius > canvas.width ||
-        circle.x - circle.radius < 0
-      ) {
-        circle.dx *= -1; // Reverse direction on reaching edge
+      const updatedCircles = circlesWasm.update(canvas.width, canvas.height);
+
+      setCircles(updatedCircles);
+
+      setKineticEnergy(calculateTotalKineticEnergy(updatedCircles));
+
+      updateCircleColors(updatedCircles);
+
+      for (const circle of updatedCircles) {
+        drawCircle(ctx, circle.x, circle.y, circle.radius, circle.color);
       }
-      if (
-        circle.y + circle.radius > canvas.height ||
-        circle.y - circle.radius < 0
-      ) {
-        circle.dy *= -1;
-      }
-
-      if (circle.x + circle.radius > canvas.width) {
-        circle.x = canvas.width - circle.radius;
-      }
-
-      if (circle.x - circle.radius < 0) {
-        circle.x = circle.radius;
-      }
-
-      if (circle.y + circle.radius > canvas.height) {
-        circle.y = canvas.height - circle.radius;
-      }
-
-      if (circle.y - circle.radius < 0) {
-        circle.y = circle.radius;
-      }
-
-      return circle;
-    });
-
-    setKineticEnergy(calculateTotalKineticEnergy(updatedCircles));
-
-    updateCircleColors(updatedCircles);
-
-    for (const circle of updatedCircles) {
-      drawCircle(ctx, circle.x, circle.y, circle.radius, circle.color);
     }
   };
 
@@ -177,8 +152,6 @@ const RustNoCollision = () => {
     try {
       await init();
       setIsWasmLoaded(true);
-      const res = add_numbers(5, 3);
-      console.log(res);
     } catch (err) {
       console.error(`Unexpected error in loadWasm. [Message: ${err.message}]`);
     }
@@ -191,26 +164,25 @@ const RustNoCollision = () => {
       setContext(ctx);
       drawRandomCircles(INITIAL_PARTICLES);
 
-      loadWasm();
+      if (!isWasmLoaded) {
+        loadWasm();
+      }
     }
   }, []);
 
   useEffect(() => {
     let animationFrameId;
-    let lastTimestamp = performance.now();
-    let frameCount = 0;
-    let fps = 0;
 
     const render = (timestamp) => {
       animate();
 
       // Calculate FPS
-      frameCount++;
+      setFrameCount(frameCount + 1);
       const elapsed = timestamp - lastTimestamp;
       if (elapsed >= 1000) {
-        fps = (frameCount / elapsed) * 1000; // Calculate FPS
-        frameCount = 0;
-        lastTimestamp = timestamp;
+        let fps = (frameCount / elapsed) * 1000; // Calculate FPS
+        setFrameCount(0);
+        setLastTimestamp(timestamp);
         setFps(Math.floor(fps)); // Display FPS
       }
 
@@ -228,7 +200,7 @@ const RustNoCollision = () => {
 
   return (
     <div>
-      <h2>Rust | No Collision</h2>
+      <h2>Rust | Naive Algorithm | Simple Elastic Collision</h2>
       <p>
         {fps}fps | Total Particles: {circles.length} | Kinetic Energy:{" "}
         {kineticEnergy} kg m/s^2 | Wasm loaded: {isWasmLoaded ? "Yes" : "No"}
@@ -248,4 +220,4 @@ const RustNoCollision = () => {
   );
 };
 
-export default RustNoCollision;
+export default NaiveRustSimpleElasticCollision;

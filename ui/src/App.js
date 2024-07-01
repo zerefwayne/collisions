@@ -8,7 +8,7 @@ import BarnesHutJavascriptSimpleElasticCollision from "./BarnesHutJavascriptSimp
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import RustNoCollision from "./RustNoCollision";
+import NaiveRustSimpleElasticCollision from "./NaiveRustSimpleElasticCollision";
 
 function App() {
   const [selectedComponent, setSelectedComponent] = useState("D");
@@ -27,7 +27,7 @@ function App() {
       case "C":
         return <BarnesHutJavascriptSimpleElasticCollision />;
       case "D":
-        return <RustNoCollision />;
+        return <NaiveRustSimpleElasticCollision />;
       default:
         return null;
     }
@@ -51,7 +51,7 @@ function App() {
               <MenuItem value="A">JS | Naive | No Collision</MenuItem>
               <MenuItem value="B">JS | Naive | Simple Elastic</MenuItem>
               <MenuItem value="C">JS | Barnes Hut | Simple Elastic</MenuItem>
-              <MenuItem value="D">Rust | No Collision</MenuItem>
+              <MenuItem value="D">Rust | Naive | Simple Elastic</MenuItem>
             </Select>
           </FormControl>
         </div>
