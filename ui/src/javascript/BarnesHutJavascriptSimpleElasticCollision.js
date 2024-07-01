@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { getRandomInteger, getRandomColorRgb } from "../utils";
 
+import "./styles.css";
+
 class QuadTree {
   constructor(boundary, capacity) {
     this.boundary = boundary; // Boundary is a rectangle { x, y, w, h }
@@ -104,8 +106,8 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   // Constants
   const INITIAL_PARTICLES = 10000;
 
-  const UNIVERSE_WIDTH = 1200;
-  const UNIVERSE_HEIGHT = 500;
+  const UNIVERSE_WIDTH = 700;
+  const UNIVERSE_HEIGHT = 700;
 
   const UNIVERSE_X_START = 0;
   const UNIVERSE_X_END = UNIVERSE_WIDTH - 1;
@@ -388,26 +390,28 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   }, [animate, context]);
 
   return (
-    <div>
-      <h2>Javascript | Barnes Hut Algorithm | Simple Elastic Collision</h2>
-      <p>
-        {fps}fps | Total Particles: {circles.length}
-      </p>
-      <p>
-        Average Kinetic Energy: {averageKineticEnergy} kg m/s^2 | Kinetic
-        Energy: {kineticEnergy} kg m/s^2{" "}
-      </p>
-      <canvas
-        ref={canvasRef}
-        id="my-canvas"
-        height={UNIVERSE_HEIGHT}
-        width={UNIVERSE_WIDTH}
-        style={{ border: "2px solid #444" }}
-        onClick={handleClick}
-      ></canvas>
-      <p style={{ color: "#999" }}>
-        Click anywhere in the collision area to launch a large particle!
-      </p>
+    <div className="scene-container">
+      <div className="canvas-container">
+        <div className="canvas-render">
+          <canvas
+            ref={canvasRef}
+            id="my-canvas"
+            height={UNIVERSE_HEIGHT}
+            width={UNIVERSE_WIDTH}
+            style={{ border: "2px solid #444" }}
+            onClick={handleClick}
+          ></canvas>
+        </div>
+        <footer>
+          <p>Total Particles: {circles.length}</p>
+          <p>Average Kinetic Energy: {averageKineticEnergy} kg m/s^2</p>
+          <p>Kinetic Energy: {kineticEnergy} kg m/s^2 </p>
+          <p>{fps}fps</p>
+        </footer>
+      </div>
+      <div className="controls-container">
+        
+      </div>
     </div>
   );
 };

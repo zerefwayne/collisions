@@ -1,0 +1,42 @@
+.canvas-container {
+  width: 75%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.canvas-container .canvas-render {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  width: 100%;
+}
+
+.canvas-container footer {
+  background-color: black;
+  width: 100%;
+  color: #888;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 0.5rem 3rem;
+}
+
+.controls-container {
+  background-color: #222;
+  width: 25%;
+  height: 100%;
+}
+
+.scene-container {
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+}

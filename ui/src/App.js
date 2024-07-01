@@ -52,7 +52,7 @@ function App() {
           </FormControl>
         </div>
       </div>
-      {renderSelectedComponent()}
+      <div className="scene">{renderSelectedComponent()}</div>
     </div>
   );
 }
