@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 import "./App.css";
-import NaiveJavascriptSimpleElasticCollision from "./javascript/NaiveJavascriptSimpleElasticCollision";
-import NaiveJavascriptNoCollision from "./javascript/NaiveJavascriptNoCollision";
-import BarnesHutJavascriptSimpleElasticCollision from "./javascript/BarnesHutJavascriptSimpleElasticCollision";
+import NaiveJavascriptSimpleElasticCollision from "./NaiveJavascriptSimpleElasticCollision";
+import NaiveJavascriptNoCollision from "./NaiveJavascriptNoCollision";
+import BarnesHutJavascriptSimpleElasticCollision from "./BarnesHutJavascriptSimpleElasticCollision";
 
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
