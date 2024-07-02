@@ -9,9 +9,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import NaiveRustSimpleElasticCollision from "./NaiveRustSimpleElasticCollision";
+import NaiveRustImprovedSimpleElasticCollision from "./NaiveRustImprovedSimpleElasticCollision";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("D");
+  const [selectedComponent, setSelectedComponent] = useState("E");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);
@@ -28,6 +29,8 @@ function App() {
         return <BarnesHutJavascriptSimpleElasticCollision />;
       case "D":
         return <NaiveRustSimpleElasticCollision />;
+      case "E":
+        return <NaiveRustImprovedSimpleElasticCollision />; 
       default:
         return null;
     }
@@ -41,7 +44,7 @@ function App() {
           <FormControl
             sx={{ m: 1, minWidth: 300 }}
             size="small"
-            class="dropdown"
+            className="dropdown"
           >
             <Select
               value={selectedComponent}
@@ -52,6 +55,7 @@ function App() {
               <MenuItem value="B">JS | Naive | Simple Elastic</MenuItem>
               <MenuItem value="C">JS | Barnes Hut | Simple Elastic</MenuItem>
               <MenuItem value="D">Rust | Naive | Simple Elastic</MenuItem>
+              <MenuItem value="E">Rust+ | Naive | Simple Elastic</MenuItem>
             </Select>
           </FormControl>
         </div>
