@@ -101,6 +101,16 @@ impl Universe {
     }
 
     #[wasm_bindgen]
+    pub fn decrease_particles(&mut self, count: i32) {
+        if (count as usize) >= self.particles.len() {
+            self.particles = vec![];
+            return;
+        }
+
+        self.particles = self.particles.split_off(count as usize);
+    }
+
+    #[wasm_bindgen]
     pub fn generate_particle(&mut self, x: f64, y: f64) {
         let radius = get_random_integer(5, 10);
         let dx = get_random_integer(-20, 20);
