@@ -12,7 +12,7 @@ import NaiveRustSimpleElasticCollision from "./NaiveRustSimpleElasticCollision";
 import NaiveRustImprovedSimpleElasticCollision from "./NaiveRustImprovedSimpleElasticCollision";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("E");
+  const [selectedComponent, setSelectedComponent] = useState("C");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);
@@ -30,7 +30,7 @@ function App() {
       case "D":
         return <NaiveRustSimpleElasticCollision />;
       case "E":
-        return <NaiveRustImprovedSimpleElasticCollision />; 
+        return <NaiveRustImprovedSimpleElasticCollision />;
       default:
         return null;
     }
