@@ -11,7 +11,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 
-import "./styles.css";
+import "./style.css";
 
 const Dashboard = ({
   handleDecrement,

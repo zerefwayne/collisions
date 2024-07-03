@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
-import { getRandomInteger, getRandomColorRgb } from "./utils";
+import { getRandomInteger, getRandomColorRgb } from "../../utils";
 
 import init, { Circles } from "collisions-src";
 
-const NaiveRustSimpleElasticCollision = () => {
+const RustNaive = () => {
   // Constants
   const INITIAL_PARTICLES = 4000;
 
@@ -217,4 +217,4 @@ const NaiveRustSimpleElasticCollision = () => {
   );
 };
 
-export default NaiveRustSimpleElasticCollision;
+export default RustNaive;

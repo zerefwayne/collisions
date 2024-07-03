@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 
 import init, { Universe } from "collisions-src";
-import Dashboard from "./Dashboard";
-import { getCanvas2dContext, getCanvasDimensions } from "./utils";
+import Dashboard from "../../Dashboard";
+import { getCanvas2dContext, getCanvasDimensions } from "../../utils";
 
-const NaiveRustImprovedSimpleElasticCollision = () => {
+const RustPlusNaive = () => {
   // Constants
   const INITIAL_PARTICLES = 4000;
 
@@ -165,4 +165,4 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
   );
 };
 
-export default NaiveRustImprovedSimpleElasticCollision;
+export default RustPlusNaive;

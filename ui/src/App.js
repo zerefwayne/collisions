@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 
-import "./App.css";
-import NaiveJavascriptSimpleElasticCollision from "./NaiveJavascriptSimpleElasticCollision";
-import NaiveJavascriptNoCollision from "./NaiveJavascriptNoCollision";
-import BarnesHutJavascriptSimpleElasticCollision from "./BarnesHutJavascriptSimpleElasticCollision";
-
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import NaiveRustSimpleElasticCollision from "./NaiveRustSimpleElasticCollision";
-import NaiveRustImprovedSimpleElasticCollision from "./NaiveRustImprovedSimpleElasticCollision";
+
+import "./App.css";
+
+import JavascriptNoCollision from "./scenarios/javascript/JavascriptNoCollision";
+import JavascriptNaive from "./scenarios/javascript/JavascriptNaive";
+import JavascriptBarnesHut from "./scenarios/javascript/JavascriptBarnesHut";
+
+import RustNaive from "./scenarios/rust/RustNaive";
+import RustPlusNaive from "./scenarios/rust/RustPlusNaive";
 
 function App() {
   const [selectedComponent, setSelectedComponent] = useState("E");
@@ -22,15 +24,15 @@ function App() {
   const renderSelectedComponent = () => {
     switch (selectedComponent) {
       case "A":
-        return <NaiveJavascriptNoCollision />;
+        return <JavascriptNoCollision />;
       case "B":
-        return <NaiveJavascriptSimpleElasticCollision />;
+        return <JavascriptNaive />;
       case "C":
-        return <BarnesHutJavascriptSimpleElasticCollision />;
+        return <JavascriptBarnesHut />;
       case "D":
-        return <NaiveRustSimpleElasticCollision />;
+        return <RustNaive />;
       case "E":
-        return <NaiveRustImprovedSimpleElasticCollision />;
+        return <RustPlusNaive />;
       default:
         return null;
     }
@@ -51,11 +53,11 @@ function App() {
               onChange={handleChange}
               sx={{ backgroundColor: "#222", color: "white" }}
             >
-              <MenuItem value="A">JS | Naive | No Collision</MenuItem>
-              <MenuItem value="B">JS | Naive | Simple Elastic</MenuItem>
-              <MenuItem value="C">JS | Barnes Hut | Simple Elastic</MenuItem>
-              <MenuItem value="D">Rust | Naive | Simple Elastic</MenuItem>
-              <MenuItem value="E">Rust+ | Naive | Simple Elastic</MenuItem>
+              <MenuItem value="A">Javascript | No collision</MenuItem>
+              <MenuItem value="B">Javascript | Naive Algorithm</MenuItem>
+              <MenuItem value="C">Javascript | Barnes Hut Algorithm</MenuItem>
+              <MenuItem value="D">Rust | Naive Algorithm</MenuItem>
+              <MenuItem value="E">Rust+ | Naive Algorithm</MenuItem>
             </Select>
           </FormControl>
         </div>

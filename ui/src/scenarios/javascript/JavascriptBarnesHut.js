@@ -6,15 +6,15 @@ import {
   getCanvas2dContext,
   updateParticleColors,
   generateParticles,
-} from "./utils";
-import { QuadTree } from "./utils/QuadTree";
-import { Rectangle } from "./utils/Rectangle";
+} from "../../utils";
+import { QuadTree } from "../../utils/QuadTree";
+import { Rectangle } from "../../utils/Rectangle";
 
-import Dashboard from "./Dashboard";
+import Dashboard from "../../Dashboard";
 
-const BarnesHutJavascriptSimpleElasticCollision = () => {
+const JavascriptBarnesHut = () => {
   // Constants
-  const INITIAL_PARTICLES = 5000;
+  const INITIAL_PARTICLES = 4000;
 
   // Universe Properties
   const [coefficientOfRestitution, setCoefficientOfRestitution] = useState(1);
@@ -246,4 +246,4 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
   );
 };
 
-export default BarnesHutJavascriptSimpleElasticCollision;
+export default JavascriptBarnesHut;

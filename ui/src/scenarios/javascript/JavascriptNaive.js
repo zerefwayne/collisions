@@ -6,11 +6,11 @@ import {
   getCanvas2dContext,
   updateParticleColors,
   generateParticles,
-} from "./utils";
+} from "../../utils";
 
-import Dashboard from "./Dashboard";
+import Dashboard from "../../Dashboard";
 
-const NaiveJavascriptNoCollision = () => {
+const JavascriptNaive = () => {
   // Constants
   const INITIAL_PARTICLES = 4000;
 
@@ -106,6 +106,65 @@ const NaiveJavascriptNoCollision = () => {
       particle.x += particle.dx;
       particle.y += particle.dy;
 
+      // // Check for collisions with other particles
+      for (let j = 0; j < particles.length; j++) {
+        if (index !== j) {
+          let otherParticle = particles[j];
+          let dx = particle.x - otherParticle.x;
+          let dy = particle.y - otherParticle.y;
+          let distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < particle.radius + otherParticle.radius) {
+            // Calculate the angle of the collision
+            let angle = Math.atan2(dy, dx);
+            let sin = Math.sin(angle);
+            let cos = Math.cos(angle);
+
+            // Rotate particle's velocity vector
+            let v1 = {
+              x: cos * particle.dx + sin * particle.dy,
+              y: cos * particle.dy - sin * particle.dx,
+            };
+            // Rotate otherParticle's velocity vector
+            let v2 = {
+              x: cos * otherParticle.dx + sin * otherParticle.dy,
+              y: cos * otherParticle.dy - sin * otherParticle.dx,
+            };
+
+            // Calculate the new velocities using the mass ratio
+            let m1 = particle.radius; // Mass of particle (assuming mass is proportional to radius)
+            let m2 = otherParticle.radius; // Mass of otherParticle
+
+            let v1Final = {
+              x: ((m1 - m2) * v1.x + 2 * m2 * v2.x) / (m1 + m2),
+              y: v1.y,
+            };
+            let v2Final = {
+              x: ((m2 - m1) * v2.x + 2 * m1 * v1.x) / (m1 + m2),
+              y: v2.y,
+            };
+
+            // Apply coefficient of restitution
+            v1Final.x *= coefficientOfRestitution;
+            v2Final.x *= coefficientOfRestitution;
+
+            // Rotate back
+            particle.dx = cos * v1Final.x - sin * v1Final.y;
+            particle.dy = cos * v1Final.y + sin * v1Final.x;
+            otherParticle.dx = cos * v2Final.x - sin * v2Final.y;
+            otherParticle.dy = cos * v2Final.y + sin * v2Final.x;
+
+            // Ensure the particles are not overlapping
+            let overlap =
+              (particle.radius + otherParticle.radius - distance) / 2;
+            particle.x += cos * overlap;
+            particle.y += sin * overlap;
+            otherParticle.x -= cos * overlap;
+            otherParticle.y -= sin * overlap;
+          }
+        }
+      }
+
       // Check for bouncing off edges
       if (
         particle.x + particle.radius > universeWidth ||
@@ -166,4 +225,4 @@ const NaiveJavascriptNoCollision = () => {
   );
 };
 
-export default NaiveJavascriptNoCollision;
+export default JavascriptNaive;
