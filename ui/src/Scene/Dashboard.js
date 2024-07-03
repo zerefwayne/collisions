@@ -22,7 +22,7 @@ const Dashboard = ({
   tick,
   isWallElastic,
   coefficientOfRestitution,
-  particles,
+  particlesLen,
 }) => {
   // References
   const canvasRef = useRef(null);
@@ -142,7 +142,7 @@ const Dashboard = ({
           }}
         >
           <header style={{ marginBottom: "1rem" }}>
-            Number of particles: {particles.length}
+            Number of particles: {particlesLen}
           </header>
           <div
             style={{
@@ -175,9 +175,7 @@ const Dashboard = ({
             <Button
               variant="contained"
               size="small"
-              onClick={() =>
-                handleIncrement(canvasRef, step)
-              }
+              onClick={() => handleIncrement(canvasRef, step)}
             >
               +
             </Button>

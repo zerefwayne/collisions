@@ -12,7 +12,7 @@ import NaiveRustSimpleElasticCollision from "./NaiveRustSimpleElasticCollision";
 import NaiveRustImprovedSimpleElasticCollision from "./NaiveRustImprovedSimpleElasticCollision";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("C");
+  const [selectedComponent, setSelectedComponent] = useState("E");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);

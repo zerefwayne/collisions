@@ -241,7 +241,7 @@ const BarnesHutJavascriptSimpleElasticCollision = () => {
       tick={tick}
       coefficientOfRestitution={coefficientOfRestitution}
       isWallElastic={isWallElastic}
-      particles={particles}
+      particlesLen={particles.length}
     />
   );
 };
