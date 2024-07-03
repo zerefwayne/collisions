@@ -22,8 +22,7 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
 
   const handleClick = (event) => {
     const { offsetX, offsetY } = event.nativeEvent;
-    const radius = 10;
-    universe.insert_particle(offsetX, offsetY, radius);
+    universe.generate_particle(offsetX, offsetY);
   };
 
   const fetchParticles = () => {
@@ -37,23 +36,29 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
 
     setNumberOfParticles(particlesLen);
 
+    const numberOfFields = 8;
+
     const memoryBuffer = new Float64Array(
       wasmMemory.buffer,
       particlesPtr,
-      particlesLen * 5
+      particlesLen * numberOfFields
     );
 
     const particles = [];
     for (let i = 0; i < particlesLen; i++) {
+      const offset = i * numberOfFields;
+
       const particle = {
-        x: memoryBuffer[i * 5],
-        y: memoryBuffer[i * 5 + 1],
-        dx: memoryBuffer[i * 5 + 2],
-        dy: memoryBuffer[i * 5 + 3],
-        radius: memoryBuffer[i * 5 + 4],
-        // TODO: Find out how to read strings
-        // color: Module.__getString(memoryBuffer[i * 6 + 5]), // Adjust based on your actual implementation
+        x: memoryBuffer[offset],
+        y: memoryBuffer[offset + 1],
+        dx: memoryBuffer[offset + 2],
+        dy: memoryBuffer[offset + 3],
+        radius: memoryBuffer[offset + 4],
+        color: `rgb(${memoryBuffer[offset + 5]},${memoryBuffer[offset + 6]},${
+          memoryBuffer[offset + 7]
+        })`,
       };
+
       particles.push(particle);
     }
 
@@ -86,13 +91,7 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
     universe.tick();
 
     fetchParticles().forEach((particle) => {
-      drawCircle(
-        ctx,
-        particle.x,
-        particle.y,
-        particle.radius,
-        'rgb(0, 85, 204)'
-      );
+      drawCircle(ctx, particle.x, particle.y, particle.radius, particle.color);
     });
   };
 

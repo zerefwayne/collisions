@@ -11,13 +11,16 @@ extern "C" {
     fn log(s: &str);
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[wasm_bindgen]
 pub struct Particle {
     pub x: f64,
     pub y: f64,
     pub dx: f64,
     pub dy: f64,
     pub radius: f64,
+    pub color_r: f64,
+    pub color_g: f64,
+    pub color_b: f64,
 }
 
 #[wasm_bindgen]
@@ -25,6 +28,34 @@ pub struct Universe {
     width: f64,
     height: f64,
     particles: Vec<Particle>,
+}
+
+fn calculate_speed(particle: &Particle) -> f64 {
+    (particle.dx.powi(2) + particle.dy.powi(2)).sqrt()
+}
+
+fn interpolate_color(value: f64, color1: [f64; 3], color2: [f64; 3]) -> [f64; 3] {
+    let r = color1[0] + value * (color2[0] - color1[0]);
+    let g = color1[1] + value * (color2[1] - color1[1]);
+    let b = color1[2] + value * (color2[2] - color1[2]);
+    [r, g, b]
+}
+
+fn get_color(speed: f64) -> [f64; 3] {
+    let normalized_speed = speed / 5.0;
+    let low_color: [f64; 3] = [0.0, 0.0, 139.0]; // Dark Blue
+    let high_color: [f64; 3] = [255.0, 0.0, 0.0]; // Red
+    interpolate_color(normalized_speed.min(1.0), low_color, high_color)
+}
+
+fn update_particle_colors(particles: &mut Vec<Particle>) {
+    for particle in particles.iter_mut() {
+        let speed = calculate_speed(&particle);
+        let color = get_color(speed); // Assuming max speed as 5.0
+        particle.color_r = color[0];
+        particle.color_g = color[1];
+        particle.color_b = color[2];
+    }
 }
 
 #[wasm_bindgen]
@@ -39,16 +70,16 @@ impl Universe {
     }
 
     #[wasm_bindgen]
-    pub fn insert_particle(&mut self, x: f64, y: f64, radius: f64) {
-        let dx = get_random_integer(-5, 5);
-        let dy = get_random_integer(-5, 5);
-
+    pub fn insert_particle(&mut self, x: f64, y: f64, dx: f64, dy: f64, radius: f64) {
         let particle = Particle {
             x,
             y,
             dy,
             dx,
             radius,
+            color_r: 255.0,
+            color_g: 255.0,
+            color_b: 255.0,
         };
 
         self.particles.push(particle);
@@ -62,8 +93,20 @@ impl Universe {
                 get_random_integer((self.height / 3.0) as i32, (2.0 * self.height / 3.0) as i32);
             let radius = get_random_integer(1, 3);
 
-            self.insert_particle(x, y, radius)
+            let dx = get_random_integer(-1, 1);
+            let dy = get_random_integer(-1, 1);
+
+            self.insert_particle(x, y, dx, dy, radius)
         }
+    }
+
+    #[wasm_bindgen]
+    pub fn generate_particle(&mut self, x: f64, y: f64) {
+        let radius = get_random_integer(5, 10);
+        let dx = get_random_integer(-20, 20);
+        let dy = get_random_integer(-20, 20);
+
+        self.insert_particle(x, y, dx, dy, radius)
     }
 
     #[wasm_bindgen]
@@ -153,6 +196,8 @@ impl Universe {
                 circle.y = circle.radius;
             }
         }
+
+        update_particle_colors(&mut self.particles);
     }
 }
 

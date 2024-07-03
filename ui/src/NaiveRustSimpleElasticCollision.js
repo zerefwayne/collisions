@@ -11,12 +11,6 @@ const NaiveRustSimpleElasticCollision = () => {
   const UNIVERSE_WIDTH = 600;
   const UNIVERSE_HEIGHT = 600;
 
-  const UNIVERSE_X_START = 0;
-  const UNIVERSE_X_END = UNIVERSE_WIDTH - 1;
-
-  const UNIVERSE_Y_START = 0;
-  const UNIVERSE_Y_END = UNIVERSE_HEIGHT - 1;
-
   // State
   const canvasRef = useRef(null);
   const [context, setContext] = useState(null);
@@ -77,8 +71,11 @@ const NaiveRustSimpleElasticCollision = () => {
     const newCircles = [];
 
     for (let i = 0; i < count; i++) {
-      const x = getRandomInteger(UNIVERSE_X_START + 298, UNIVERSE_X_END - 298);
-      const y = getRandomInteger(UNIVERSE_Y_START + 298, UNIVERSE_Y_END - 298);
+      const x = getRandomInteger(UNIVERSE_WIDTH / 3, UNIVERSE_WIDTH * (2 / 3));
+      const y = getRandomInteger(
+        UNIVERSE_HEIGHT / 3,
+        UNIVERSE_HEIGHT * (2 / 3)
+      );
       const dx = getRandomInteger(-1, 1);
       const dy = getRandomInteger(-1, 1);
       const radius = getRandomInteger(1, 3);
