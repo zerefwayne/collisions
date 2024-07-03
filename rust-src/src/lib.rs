@@ -25,9 +25,11 @@ pub struct Particle {
 
 #[wasm_bindgen]
 pub struct Universe {
-    width: f64,
-    height: f64,
+    pub width: f64,
+    pub height: f64,
     particles: Vec<Particle>,
+    pub coefficient_of_restitution: f64,
+    pub is_wall_elastic: bool,
 }
 
 fn calculate_speed(particle: &Particle) -> f64 {
@@ -66,6 +68,8 @@ impl Universe {
             width,
             height,
             particles: Vec::new(),
+            coefficient_of_restitution: 1.0,
+            is_wall_elastic: true,
         }
     }
 
@@ -136,6 +140,16 @@ impl Universe {
     }
 
     #[wasm_bindgen]
+    pub fn set_coefficient_of_restitution(&mut self, new_coefficient: f64) {
+        self.coefficient_of_restitution = new_coefficient;
+    }
+
+    #[wasm_bindgen]
+    pub fn set_is_wall_elastic(&mut self, new_value: bool) {
+        self.is_wall_elastic = new_value;
+    }
+
+    #[wasm_bindgen]
     pub fn tick(&mut self) {
         for i in 0..self.particles.len() {
             let (first, rest) = self.particles.split_at_mut(i + 1);
@@ -166,8 +180,11 @@ impl Universe {
                     let m1 = circle.radius;
                     let m2 = other_circle.radius;
 
-                    let v1_final = (((m1 - m2) * v1.0 + 2.0 * m2 * v2.0) / (m1 + m2), v1.1);
-                    let v2_final = (((m2 - m1) * v2.0 + 2.0 * m1 * v1.0) / (m1 + m2), v2.1);
+                    let mut v1_final = (((m1 - m2) * v1.0 + 2.0 * m2 * v2.0) / (m1 + m2), v1.1);
+                    let mut v2_final = (((m2 - m1) * v2.0 + 2.0 * m1 * v1.0) / (m1 + m2), v2.1);
+
+                    v1_final = (v1_final.0 * self.coefficient_of_restitution, v1_final.1);
+                    v2_final = (v2_final.0 * self.coefficient_of_restitution, v2_final.1);
 
                     circle.dx = cos * v1_final.0 - sin * v1_final.1;
                     circle.dy = cos * v1_final.1 + sin * v1_final.0;
@@ -185,9 +202,17 @@ impl Universe {
             // Check for bouncing off edges
             if circle.x + circle.radius > self.width || circle.x - circle.radius < 0.0 {
                 circle.dx *= -1.0;
+
+                if !self.is_wall_elastic {
+                    circle.dx *= self.coefficient_of_restitution;
+                }
             }
             if circle.y + circle.radius > self.height || circle.y - circle.radius < 0.0 {
                 circle.dy *= -1.0;
+
+                if !self.is_wall_elastic {
+                    circle.dy *= self.coefficient_of_restitution;
+                }
             }
 
             if circle.x + circle.radius > self.width {

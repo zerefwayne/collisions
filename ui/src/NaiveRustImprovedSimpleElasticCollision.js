@@ -2,7 +2,14 @@
 import { useEffect, useRef, useState } from "react";
 
 import Paper from "@mui/material/Paper";
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  TextField,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Slider,
+} from "@mui/material";
 
 import "./styles.css";
 
@@ -25,6 +32,9 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
   const [fps, setFps] = useState(0);
   const [numberOfParticles, setNumberOfParticles] = useState(0);
 
+  const [coefficientOfRestitution, setCoefficientOfRestitution] = useState(1);
+  const [IsWallElastic, setIsWallElastic] = useState(true);
+
   const [UNIVERSE_WIDTH, setUniverseWidth] = useState(600);
   const [UNIVERSE_HEIGHT, setUniverseHeight] = useState(600);
 
@@ -44,6 +54,16 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
     if (!isNaN(value) && value >= 0) {
       setStep(value);
     }
+  };
+
+  const handleIsWallElastic = (event, newValue) => {
+    setIsWallElastic(newValue);
+    universe.set_is_wall_elastic(newValue);
+  };
+
+  const handleRestitutionChange = (event, newValue) => {
+    setCoefficientOfRestitution(newValue);
+    universe.set_coefficient_of_restitution(newValue);
   };
 
   const handleIncrement = () => {
@@ -285,7 +305,7 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
             </Button>
           </body>
         </Paper>
-        {/* <Paper
+        <Paper
           elevation={0}
           square
           sx={{
@@ -319,8 +339,8 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
               onChange={handleRestitutionChange}
             />
           </body>
-        </Paper> */}
-        {/* <Paper
+        </Paper>
+        <Paper
           elevation={0}
           square
           sx={{
@@ -354,7 +374,7 @@ const NaiveRustImprovedSimpleElasticCollision = () => {
               />
             </FormGroup>
           </body>
-        </Paper> */}
+        </Paper>
       </div>
     </div>
   );
