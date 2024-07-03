@@ -10,7 +10,7 @@ import {
 import { QuadTree } from "./utils/QuadTree";
 import { Rectangle } from "./utils/Rectangle";
 
-import Dashboard from "./Scene/Dashboard";
+import Dashboard from "./Dashboard";
 
 const BarnesHutJavascriptSimpleElasticCollision = () => {
   // Constants

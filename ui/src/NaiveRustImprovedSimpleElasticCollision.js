@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 
-import "./styles.css";
-
 import init, { Universe } from "collisions-src";
-import Dashboard from "./Scene/Dashboard";
+import Dashboard from "./Dashboard";
 import { getCanvas2dContext, getCanvasDimensions } from "./utils";
 
 const NaiveRustImprovedSimpleElasticCollision = () => {
