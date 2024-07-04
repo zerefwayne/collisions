@@ -44,7 +44,7 @@ const Dashboard = ({
     let animationFrameId;
     let lastTimestamp = performance.now();
     let frameCount = 0;
-    let fps = 0;
+    let currentFps = 0;
 
     const render = (timestamp) => {
       const canvas = canvasRef.current;
@@ -56,10 +56,10 @@ const Dashboard = ({
       frameCount++;
       const elapsed = timestamp - lastTimestamp;
       if (elapsed >= 1000) {
-        fps = (frameCount / elapsed) * 1000; // Calculate FPS
+        currentFps = (frameCount / elapsed) * 1000; // Calculate FPS
         frameCount = 0;
         lastTimestamp = timestamp;
-        setFps(Math.floor(fps)); // Display FPS
+        setFps(Math.floor(currentFps)); // Display FPS
       }
 
       animationFrameId = window.requestAnimationFrame(render);
