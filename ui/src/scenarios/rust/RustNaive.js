@@ -10,7 +10,7 @@ import {
   generateParticles,
 } from "../../utils";
 
-import init, { Circles } from "collisions-src";
+import init, { ParticlesSerialized } from "collisions-src";
 import Dashboard from "../../Dashboard";
 
 const RustNaive = () => {
@@ -112,7 +112,7 @@ const RustNaive = () => {
       return;
     }
 
-    const particlesWasm = new Circles(particles);
+    const particlesWasm = new ParticlesSerialized(particles);
 
     const updatedParticles = particlesWasm.update(
       containerWidth,
