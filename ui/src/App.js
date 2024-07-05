@@ -12,9 +12,10 @@ import JavascriptBarnesHut from "./scenarios/javascript/JavascriptBarnesHut";
 
 import RustNaive from "./scenarios/rust/RustNaive";
 import RustPlusNaive from "./scenarios/rust/RustPlusNaive";
+import RustBarnesHut from "./scenarios/rust/RustBarnesHut";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("E");
+  const [selectedComponent, setSelectedComponent] = useState("F");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);
@@ -33,6 +34,8 @@ function App() {
         return <RustNaive />;
       case "E":
         return <RustPlusNaive />;
+      case "F":
+        return <RustBarnesHut />;
       default:
         return null;
     }
@@ -58,6 +61,7 @@ function App() {
               <MenuItem value="C">Javascript | Barnes Hut Algorithm</MenuItem>
               <MenuItem value="D">Rust | Naive Algorithm</MenuItem>
               <MenuItem value="E">Rust+ | Naive Algorithm</MenuItem>
+              <MenuItem value="F">Rust+ | Barnes Hut Algorithm 🚧</MenuItem>
             </Select>
           </FormControl>
         </div>
