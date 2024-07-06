@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.2f33984d.css",
+    "main.js": "/static/js/main.fedfd40e.js",
+    "static/js/453.9b41687b.chunk.js": "/static/js/453.9b41687b.chunk.js",
+    "static/media/collisions_src_bg.wasm": "/static/media/collisions_src_bg.e12b361115b7b82a3f69.wasm",
+    "index.html": "/index.html",
+    "main.2f33984d.css.map": "/static/css/main.2f33984d.css.map",
+    "main.fedfd40e.js.map": "/static/js/main.fedfd40e.js.map",
+    "453.9b41687b.chunk.js.map": "/static/js/453.9b41687b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2f33984d.css",
+    "static/js/main.fedfd40e.js"
+  ]
+}

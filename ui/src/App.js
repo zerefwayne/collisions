@@ -15,7 +15,7 @@ import RustPlusNaive from "./scenarios/rust/RustPlusNaive";
 import RustBarnesHut from "./scenarios/rust/RustBarnesHut";
 
 function App() {
-  const [selectedComponent, setSelectedComponent] = useState("F");
+  const [selectedComponent, setSelectedComponent] = useState("C");
 
   const handleChange = (event) => {
     setSelectedComponent(event.target.value);
