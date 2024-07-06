@@ -10,6 +10,7 @@ import {
   FormGroup,
   FormControlLabel,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 import "./style.css";
 
@@ -249,6 +250,36 @@ const Dashboard = ({
                 label="Collisions with wall are elastic"
               />
             </FormGroup>
+          </div>
+        </Paper>
+        <Paper
+          elevation={0}
+          square
+          sx={{
+            backgroundColor: "#0a0a0a",
+            color: "white",
+            padding: "1rem",
+            borderBottom: "1px solid #222",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          }}
+        >
+          <header
+            style={{
+              marginBottom: "1rem",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <InfoOutlinedIcon
+              style={{ marginRight: "5px", color: "rgb(25, 118, 210)" }}
+            />{" "}
+            Instructions
+          </header>
+          <div style={{ color: "#aaa" }}>
+            <p>Click in the collision area to launch a particle.</p>
           </div>
         </Paper>
       </div>
