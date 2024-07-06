@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/collisions/static/css/main.2f33984d.css",
-    "main.js": "/collisions/static/js/main.68be27a3.js",
+    "main.js": "/collisions/static/js/main.cde19e34.js",
     "static/js/453.9b41687b.chunk.js": "/collisions/static/js/453.9b41687b.chunk.js",
     "static/media/collisions_src_bg.wasm": "/collisions/static/media/collisions_src_bg.e12b361115b7b82a3f69.wasm",
     "index.html": "/collisions/index.html",
     "main.2f33984d.css.map": "/collisions/static/css/main.2f33984d.css.map",
-    "main.68be27a3.js.map": "/collisions/static/js/main.68be27a3.js.map",
+    "main.cde19e34.js.map": "/collisions/static/js/main.cde19e34.js.map",
     "453.9b41687b.chunk.js.map": "/collisions/static/js/453.9b41687b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.2f33984d.css",
-    "static/js/main.68be27a3.js"
+    "static/js/main.cde19e34.js"
   ]
 }
